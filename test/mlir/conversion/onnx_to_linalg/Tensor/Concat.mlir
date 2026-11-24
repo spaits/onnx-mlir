@@ -122,6 +122,19 @@ func.func @concat_ignores_rank_one_empty(%empty: tensor<0xf32>,
 
 // -----
 
+func.func @concat_all_empty(
+    %arg0: tensor<0xf32>, %arg1: tensor<0xf32>) -> tensor<0xf32> {
+  %0 = "onnx.Concat"(%arg0, %arg1) {axis = 0 : si64} :
+      (tensor<0xf32>, tensor<0xf32>) -> tensor<0xf32>
+  return %0 : tensor<0xf32>
+
+  // CHECK-LABEL: func.func @concat_all_empty(
+  // CHECK: [[RESULT:%.+]] = tensor.concat dim(0) %arg0, %arg1 : (tensor<0xf32>, tensor<0xf32>) -> tensor<0xf32>
+  // CHECK-NEXT: return [[RESULT]] : tensor<0xf32>
+}
+
+// -----
+
 func.func @concat_unranked_not_lowered(
     %arg0: tensor<*xf32>, %arg1: tensor<*xf32>) -> tensor<*xf32> {
   %0 = "onnx.Concat"(%arg0, %arg1) {axis = 0 : si64} :
